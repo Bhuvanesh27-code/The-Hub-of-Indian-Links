@@ -1,0 +1,205 @@
+{
+  "entities": {
+    "GovernmentLink": {
+      "title": "GovernmentLink",
+      "description": "An official Indian government portal, department, or citizen service link",
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the link record",
+          "maxLength": 128
+        },
+        "name": {
+          "type": "string",
+          "description": "Official portal or service name",
+          "maxLength": 200
+        },
+        "url": {
+          "type": "string",
+          "description": "Verified official website URL",
+          "maxLength": 500
+        },
+        "governmentLevel": {
+          "type": "string",
+          "description": "Level of government: central, state, or ut",
+          "enum": ["central", "state", "ut"]
+        },
+        "stateOrUT": {
+          "type": "string",
+          "description": "Name of the State or Union Territory if applicable",
+          "maxLength": 100
+        },
+        "department": {
+          "type": "string",
+          "description": "Ministry or department name",
+          "maxLength": 200
+        },
+        "category": {
+          "type": "string",
+          "description": "Primary service category",
+          "maxLength": 100
+        },
+        "description": {
+          "type": "string",
+          "description": "Summary of portal purpose and services",
+          "maxLength": 1000
+        },
+        "uses": {
+          "type": "array",
+          "description": "Specific actions or tasks citizens can perform",
+          "items": {
+            "type": "string"
+          }
+        },
+        "keywords": {
+          "type": "array",
+          "description": "Search keywords, aliases, and tags",
+          "items": {
+            "type": "string"
+          }
+        },
+        "officialSource": {
+          "type": "string",
+          "description": "Authoritative directory or gazette source confirming official status",
+          "maxLength": 500
+        },
+        "lastVerified": {
+          "type": "string",
+          "description": "ISO date string of last verification",
+          "maxLength": 50
+        },
+        "verificationStatus": {
+          "type": "string",
+          "description": "Status in the verification lifecycle",
+          "enum": ["verified", "pending", "needs_rechecking", "broken"]
+        },
+        "featured": {
+          "type": "boolean",
+          "description": "Whether to highlight on homepage"
+        },
+        "updatedAt": {
+          "type": "string",
+          "description": "ISO timestamp of last modification",
+          "maxLength": 50
+        },
+        "clickCount": {
+          "type": "number",
+          "description": "Total user visits and clicks on the portal link"
+        }
+      },
+      "required": ["id", "name", "url", "governmentLevel", "category", "verificationStatus"]
+    },
+    "Proverb": {
+      "title": "Proverb",
+      "description": "Inspirational proverb displayed on Bright Indian",
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier",
+          "maxLength": 128
+        },
+        "text": {
+          "type": "string",
+          "description": "Text of the proverb",
+          "maxLength": 500
+        },
+        "order": {
+          "type": "number",
+          "description": "Display order"
+        },
+        "updatedAt": {
+          "type": "string",
+          "description": "ISO timestamp",
+          "maxLength": 50
+        }
+      },
+      "required": ["id", "text", "order"]
+    },
+    "BrokenLinkReport": {
+      "title": "BrokenLinkReport",
+      "description": "Citizen report of a broken or incorrect government link",
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique report ID",
+          "maxLength": 128
+        },
+        "linkId": {
+          "type": "string",
+          "description": "ID of the reported link",
+          "maxLength": 128
+        },
+        "linkName": {
+          "type": "string",
+          "description": "Name of the reported link",
+          "maxLength": 200
+        },
+        "linkUrl": {
+          "type": "string",
+          "description": "URL of the reported link",
+          "maxLength": 500
+        },
+        "issueType": {
+          "type": "string",
+          "description": "Type of issue",
+          "maxLength": 100
+        },
+        "details": {
+          "type": "string",
+          "description": "Description of the problem",
+          "maxLength": 1000
+        },
+        "status": {
+          "type": "string",
+          "description": "Review status of report",
+          "enum": ["pending", "reviewed", "resolved", "dismissed"]
+        },
+        "createdAt": {
+          "type": "string",
+          "description": "Timestamp when submitted",
+          "maxLength": 50
+        }
+      },
+      "required": ["id", "linkName", "issueType", "status"]
+    },
+    "AdminProfile": {
+      "title": "AdminProfile",
+      "description": "Administrator record for authorized management",
+      "type": "object",
+      "properties": {
+        "email": {
+          "type": "string",
+          "description": "Authorized admin email",
+          "maxLength": 200
+        },
+        "role": {
+          "type": "string",
+          "description": "Admin role",
+          "maxLength": 50
+        }
+      },
+      "required": ["email", "role"]
+    }
+  },
+  "firestore": {
+    "/government_links/{linkId}": {
+      "schema": "GovernmentLink",
+      "description": "Collection of verified Indian government links"
+    },
+    "/proverbs/{proverbId}": {
+      "schema": "Proverb",
+      "description": "Collection of proverbs shown in the rotating proverb section"
+    },
+    "/broken_link_reports/{reportId}": {
+      "schema": "BrokenLinkReport",
+      "description": "Citizen reports for broken or outdated links"
+    },
+    "/admins/{uid}": {
+      "schema": "AdminProfile",
+      "description": "Allowlisted administrators"
+    }
+  }
+}

@@ -1,0 +1,6 @@
+{
+  "name": "The Hub of Indian Links",
+  "description": "The Hub of Indian Links — All Indian Government Links in One Place. The definitive directory of authentic Indian Central, State, and Union Territory government portals, public services, schemes, and departments.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

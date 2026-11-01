@@ -1,0 +1,102 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // Default-deny catch-all
+    match /{document=**} {
+      allow read, write: if false;
+    }
+
+    // Helper functions
+    function isValidId(id) {
+      return id is string && id.size() > 0 && id.size() <= 128 && id.matches('^[a-zA-Z0-9_\\-]+$');
+    }
+
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function isVerifiedEmail() {
+      return isSignedIn() && request.auth.token.email_verified == true;
+    }
+
+    function isAdmin() {
+      return isSignedIn() && request.auth.token.email == 'bhuvaneshvpm406@gmail.com';
+    }
+
+    function isValidGovernmentLink(data) {
+      return data.keys().hasAll(['id', 'name', 'url', 'governmentLevel', 'category', 'verificationStatus']) &&
+        data.id is string && data.id.size() <= 128 &&
+        data.name is string && data.name.size() > 0 && data.name.size() <= 200 &&
+        data.url is string && data.url.size() > 0 && data.url.size() <= 500 &&
+        data.governmentLevel in ['central', 'state', 'ut'] &&
+        data.category is string && data.category.size() <= 100 &&
+        data.verificationStatus in ['verified', 'pending', 'needs_rechecking', 'broken'] &&
+        (!('stateOrUT' in data) || (data.stateOrUT is string && data.stateOrUT.size() <= 100)) &&
+        (!('department' in data) || (data.department is string && data.department.size() <= 200)) &&
+        (!('description' in data) || (data.description is string && data.description.size() <= 1000)) &&
+        (!('officialSource' in data) || (data.officialSource is string && data.officialSource.size() <= 500)) &&
+        (!('lastVerified' in data) || (data.lastVerified is string && data.lastVerified.size() <= 50)) &&
+        (!('featured' in data) || data.featured is bool) &&
+        (!('updatedAt' in data) || (data.updatedAt is string && data.updatedAt.size() <= 50)) &&
+        (!('uses' in data) || (data.uses is list && data.uses.size() <= 20)) &&
+        (!('keywords' in data) || (data.keywords is list && data.keywords.size() <= 50)) &&
+        (!('clickCount' in data) || (data.clickCount is number && data.clickCount >= 0));
+    }
+
+    function isValidProverb(data) {
+      return data.keys().hasAll(['id', 'text', 'order']) &&
+        data.id is string && data.id.size() <= 128 &&
+        data.text is string && data.text.size() > 0 && data.text.size() <= 500 &&
+        data.order is number &&
+        (!('updatedAt' in data) || (data.updatedAt is string && data.updatedAt.size() <= 50));
+    }
+
+    function isValidReport(data) {
+      return data.keys().hasAll(['id', 'linkName', 'issueType', 'status']) &&
+        data.id is string && data.id.size() <= 128 &&
+        data.linkName is string && data.linkName.size() > 0 && data.linkName.size() <= 200 &&
+        data.issueType is string && data.issueType.size() <= 100 &&
+        data.status == 'pending' &&
+        (!('linkId' in data) || (data.linkId is string && data.linkId.size() <= 128)) &&
+        (!('linkUrl' in data) || (data.linkUrl is string && data.linkUrl.size() <= 500)) &&
+        (!('details' in data) || (data.details is string && data.details.size() <= 1000)) &&
+        (!('createdAt' in data) || (data.createdAt is string && data.createdAt.size() <= 50));
+    }
+
+    // Collection: government_links
+    match /government_links/{linkId} {
+      allow read: if true;
+      allow create: if isValidId(linkId) && isAdmin() && isValidGovernmentLink(request.resource.data);
+      allow update: if isValidId(linkId) && (
+        (isAdmin() && isValidGovernmentLink(request.resource.data)) ||
+        (request.resource.data.diff(resource.data).affectedKeys().hasOnly(['clickCount', 'updatedAt']) &&
+         request.resource.data.clickCount is number &&
+         request.resource.data.clickCount >= 0)
+      );
+      allow delete: if isValidId(linkId) && isAdmin();
+    }
+
+    // Collection: proverbs
+    match /proverbs/{proverbId} {
+      allow read: if true;
+      allow create: if isValidId(proverbId) && isAdmin() && isValidProverb(request.resource.data);
+      allow update: if isValidId(proverbId) && isAdmin() && isValidProverb(request.resource.data);
+      allow delete: if isValidId(proverbId) && isAdmin();
+    }
+
+    // Collection: broken_link_reports
+    match /broken_link_reports/{reportId} {
+      allow read: if isAdmin();
+      allow create: if isValidId(reportId) && isValidReport(request.resource.data);
+      allow update: if isValidId(reportId) && isAdmin();
+      allow delete: if isValidId(reportId) && isAdmin();
+    }
+
+    // Collection: admins
+    match /admins/{adminId} {
+      allow read: if isSignedIn();
+      allow write: if isAdmin();
+    }
+  }
+}

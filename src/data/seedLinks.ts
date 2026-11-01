@@ -1,0 +1,77 @@
+import { GovernmentLink } from '../types';
+import databaseJson from './database.json';
+
+export const ALL_INDIAN_STATES: string[] = [
+  'Andhra Pradesh',
+  'Arunachal Pradesh',
+  'Assam',
+  'Bihar',
+  'Chhattisgarh',
+  'Goa',
+  'Gujarat',
+  'Haryana',
+  'Himachal Pradesh',
+  'Jharkhand',
+  'Karnataka',
+  'Kerala',
+  'Madhya Pradesh',
+  'Maharashtra',
+  'Manipur',
+  'Meghalaya',
+  'Mizoram',
+  'Nagaland',
+  'Odisha',
+  'Punjab',
+  'Rajasthan',
+  'Sikkim',
+  'Tamil Nadu',
+  'Telangana',
+  'Tripura',
+  'Uttar Pradesh',
+  'Uttarakhand',
+  'West Bengal',
+];
+
+export const ALL_UNION_TERRITORIES: string[] = [
+  'Andaman and Nicobar Islands',
+  'Chandigarh',
+  'Dadra and Nagar Haveli and Daman and Diu',
+  'Delhi (NCT)',
+  'Jammu and Kashmir',
+  'Ladakh',
+  'Lakshadweep',
+  'Puducherry',
+];
+
+export const SERVICE_CATEGORIES: string[] = [
+  'National gateway (direct portal)',
+  'Government directory (direct portal)',
+  'Citizen services (direct portal)',
+  'Identity services (direct portal)',
+  'Passport and travel (direct portal)',
+  'Digital public services (direct portal)',
+  'Digital documents (direct portal)',
+  'Education policy (direct portal)',
+  'Higher education (direct portal)',
+  'Technical education (direct portal)',
+  'School education / exams (direct portal)',
+  'Entrance examinations (direct portal)',
+  'Scholarships (direct portal)',
+  'Employment (direct portal)',
+  'Recruitment (direct portal)',
+  'Recruitment / examinations (direct portal)',
+  'Defence recruitment (direct portal)',
+  'Taxation (direct portal)',
+  'Taxation / GST (direct portal)',
+  'Transport / vehicle services (direct portal)',
+  'Transport / driving licence (direct portal)',
+  'Rail transport (direct portal)',
+  'Agriculture / farmer welfare (direct portal)',
+  'Agriculture / farmer benefits (direct portal)',
+  'Health / family welfare (direct portal)',
+  'Judiciary (direct portal)',
+  'Consumer protection (direct portal)',
+  'State/UT main government portal'
+];
+
+export const INITIAL_GOVERNMENT_LINKS: GovernmentLink[] = databaseJson.links as unknown as GovernmentLink[];
